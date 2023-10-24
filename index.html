@@ -1,10 +1,22 @@
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FPIS</title>
+  <title>QR Code Generation</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
+  <h1>Generate a unique QR code for your product</h1>
+  <form action="/generate-qr-code" method="post">
+    <label for="product_name">Product Name:</label>
+    <input type="text" name="product_name" id="product_name">
+    <br>
+    <label for="product_description">Product Description:</label>
+    <textarea name="product_description" id="product_description"></textarea>
+    <br>
+    <label for="product_image">Product Image:</label>
+    <input type="file" name="product_image" id="product_image">
+    <br>
+    <input type="submit" value="Generate QR Code">
+  </form>
 </body>
 </html>
