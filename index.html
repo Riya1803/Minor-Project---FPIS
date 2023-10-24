@@ -2,21 +2,39 @@
 <html>
 <head>
   <title>QR Code Generation</title>
-  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-  <h1>Generate a unique QR code for your product</h1>
-  <form action="/generate-qr-code" method="post">
-    <label for="product_name">Product Name:</label>
-    <input type="text" name="product_name" id="product_name">
-    <br>
-    <label for="product_description">Product Description:</label>
-    <textarea name="product_description" id="product_description"></textarea>
-    <br>
-    <label for="product_image">Product Image:</label>
-    <input type="file" name="product_image" id="product_image">
-    <br>
-    <input type="submit" value="Generate QR Code">
-  </form>
+  <div id="content-wrapper">
+    <h1>Generate a QR Code for Your Product</h1>
+    <form id="qr-code-form">
+      <label for="product-name">Product Name:</label>
+      <input type="text" name="product-name" id="product-name" required>
+      <br>
+      <label for="product-description">Product Description:</label>
+      <textarea name="product-description" id="product-description" required></textarea>
+      <br>
+      <input type="button" id="generate-qr-code" value="Generate QR Code">
+    </form>
+
+    <div id="qr-code-image"></div>
+  </div>
+
+  <script>
+    const generateQRCodeButton = document.querySelector('#generate-qr-code');
+    const qrCodeImage = document.querySelector('#qr-code-image');
+
+    generateQRCodeButton.addEventListener('click', function() {
+      const productName = document.querySelector('#product-name').value;
+      const productDescription = document.querySelector('#product-description').value;
+
+      const qrcode = new QRCode(qrCodeImage, {
+        text: `Product Name: ${productName}\nProduct Description: ${productDescription}`,
+        width: 128,
+        height: 128,
+      });
+    });
+  </script>
 </body>
 </html>
