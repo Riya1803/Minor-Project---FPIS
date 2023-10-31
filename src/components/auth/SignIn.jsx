@@ -12,8 +12,11 @@ const SignIn = () => {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // On successful login, navigate to the Dashboard
-        navigate("/dashboard");
+        const user = userCredential.user;
+        const userId = user.uid;
+
+        // On successful login, navigate to the Dashboard with the user ID
+        navigate(`/dashboard/${userId}`);
       })
       .catch((error) => {
         console.log(error);

@@ -1,6 +1,7 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { ref, set } from "firebase/database"; // Import Firebase Realtime Database functions
 import React, { useState } from "react";
-import { auth } from "../../firebase";
+import { auth, database } from "../../firebase"; // Make sure to import the `database` object
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -8,12 +9,32 @@ const SignUp = () => {
 
   const signUp = (e) => {
     e.preventDefault();
+
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log(userCredential);
+        const user = userCredential.user;
+        const userId = user.uid;
+
+        // Initialize the user's data node in the Realtime Database
+        const userNode = ref(database, `users/${userId}`);
+
+        // Create an initial data structure for the user (e.g., products)
+        const initialUserData = {
+          products: {},
+          // Add other user-related data if needed
+        };
+
+        // Set the user's data in the Realtime Database
+        set(userNode, initialUserData)
+          .then(() => {
+            console.log("User data node created successfully!");
+          })
+          .catch((error) => {
+            console.error("Error creating user data node: ", error);
+          });
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Error creating user: ", error);
       });
   };
 

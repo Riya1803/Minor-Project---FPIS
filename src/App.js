@@ -1,9 +1,9 @@
 import React from "react";
-import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Link, useParams } from "react-router-dom"; // Import useParams
 import SignIn from './components/auth/SignIn';
 import SignUp from './components/auth/SignUp';
 import AuthDetails from './components/AuthDetails';
-import Dashboard from './components/Dashboard'; // Create this component
+import Dashboard from './components/Dashboard';
 
 function App() {
   return (
@@ -17,14 +17,13 @@ function App() {
             <li className="nav-item">
               <Link to="/signup" className="nav-link">Sign Up</Link>
             </li>
-            
           </ul>
         </nav>
 
         <Routes>
           <Route path="/login" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/:userId" element={<Dashboard />} /> {/* Add route parameter */}
           {/* Add other routes as needed */}
         </Routes>
 
