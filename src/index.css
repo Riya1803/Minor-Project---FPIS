@@ -128,3 +128,33 @@ li {
   text-decoration: underline;
   font-weight: bold;
 }
+/* Add this code to your CSS file */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+}
+td > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; 
+  /* Ensure the button takes the full height of the row */
+}
+td > div > button {
+  margin-left: 10px; /* Adjust the margin as needed */
+}

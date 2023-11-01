@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { ref, push, get, set } from "firebase/database";
-import { auth, database } from "../firebase"; // Make sure to import the `database` object
+import { auth, database } from "../firebase";
+import QRCode from "qrcode.react";
 
 const Dashboard = ({ userId }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [batchNumber, setBatchNumber] = useState("");
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const [showTable, setShowTable] = useState(false);
+  const [showQRMap, setShowQRMap] = useState({});
   const [products, setProducts] = useState([]);
 
-  // Function to add a product to the user's data node in the database
   const addProduct = () => {
     const productData = {
       name,
@@ -18,7 +20,7 @@ const Dashboard = ({ userId }) => {
     };
 
     const db = ref(database, `users/${userId}/products`);
-    const newProductRef = push(db); // Generate a unique key for the product
+    const newProductRef = push(db);
 
     set(newProductRef, productData)
       .then(() => {
@@ -32,7 +34,18 @@ const Dashboard = ({ userId }) => {
       });
   };
 
-  // Function to retrieve and display products from the user's data node
+  const toggleQRCode = (productId) => {
+    const updatedShowQRMap = { ...showQRMap };
+    updatedShowQRMap[productId] = !updatedShowQRMap[productId];
+    setShowQRMap(updatedShowQRMap);
+  };
+
+  const hideQRCode = (productId) => {
+    const updatedShowQRMap = { ...showQRMap };
+    updatedShowQRMap[productId] = false;
+    setShowQRMap(updatedShowQRMap);
+  };
+
   const showProducts = () => {
     const db = ref(database, `users/${userId}/products`);
     get(db)
@@ -40,10 +53,16 @@ const Dashboard = ({ userId }) => {
         if (snapshot.exists()) {
           const productData = snapshot.val();
           const productArray = Object.values(productData);
+          const initialShowQRMap = productArray.reduce((acc, product) => {
+            acc[product.name] = false;
+            return acc;
+          }, {});
+          setShowQRMap(initialShowQRMap);
           setProducts(productArray);
         } else {
           console.log("No products available");
         }
+        setShowTable(true);
       })
       .catch((error) => {
         console.error("Error getting products: ", error);
@@ -81,13 +100,41 @@ const Dashboard = ({ userId }) => {
           <div>
             <h2>Show Products</h2>
             <button onClick={showProducts}>Show Products</button>
-            <ul>
-              {products.map((product, index) => (
-                <li key={index}>
-                  Name: {product.name}, Description: {product.description}, Batch Number: {product.batchNumber}
-                </li>
-              ))}
-            </ul>
+            {showTable && (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Batch Number</th>
+                    <th>QR Code</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {products.map((product, index) => (
+                    <tr key={index}>
+                      <td>{product.name}</td>
+                      <td>{product.description}</td>
+                      <td>{product.batchNumber}</td>
+                      <td>
+                        {showQRMap[product.name] ? (
+                          <div>
+                            <QRCode value={JSON.stringify(product)} size={128} />
+                            <button onClick={() => hideQRCode(product.name)}>
+                              Hide QR Code
+                            </button>
+                          </div>
+                        ) : (
+                          <button onClick={() => toggleQRCode(product.name)}>
+                            Show QR Code
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
         <button onClick={() => setShowAddProduct(!showAddProduct)}>
